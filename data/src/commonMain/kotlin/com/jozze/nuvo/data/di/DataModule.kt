@@ -17,7 +17,9 @@ import org.koin.dsl.module
 val dataModule = module {
     includes(platformDataModule)
 
-    single { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
+    single(qualifier = org.koin.core.qualifier.named("appScope")) { 
+        CoroutineScope(SupervisorJob() + Dispatchers.Default) 
+    }
 
     single { get<NuvoDatabase>().cartDao() }
 
@@ -35,7 +37,7 @@ val dataModule = module {
     single<CatalogRepository> { CatalogRepositoryImpl(get()) }
 
     single { CartApi(get()) }
-    single<CartRepository> { CartRepositoryImpl(get(), get(), get()) }
+    single<CartRepository> { CartRepositoryImpl(get(), get(), get(org.koin.core.qualifier.named("appScope"))) }
 
     single { OrderApi(get()) }
     single<OrderRepository> { OrderRepositoryImpl(get()) }

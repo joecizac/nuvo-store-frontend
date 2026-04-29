@@ -51,7 +51,7 @@ class CheckoutViewModel(
                 copy(
                     isLoading = false,
                     addresses = addresses,
-                    selectedAddressId = state.selectedAddressId ?: addresses.firstOrNull { it.isDefault }?.id ?: addresses.firstOrNull()?.id
+                    selectedAddressId = selectedAddressId ?: addresses.firstOrNull { it.isDefault }?.id ?: addresses.firstOrNull()?.id
                 )
             }
         }
