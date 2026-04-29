@@ -1,59 +1,59 @@
 # Karpathy behavioral guidelines
 
-**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
+**Tradeoff:** Guidelines bias caution over speed. Use judgment for trivial tasks.
 
 ## 1. Think Before Coding
 
-**Don't assume. Don't hide confusion. Surface tradeoffs.**
+**No assumptions. No hidden confusion. Surface tradeoffs.**
 
-Before implementing:
+Before implement:
 
-- State your assumptions explicitly. If uncertain, ask.
-- If multiple interpretations exist, present them - don't pick silently.
-- If a simpler approach exists, say so. Push back when warranted.
-- If something is unclear, stop. Name what's confusing. Ask.
+- State assumptions explicit. If unsure, ask.
+- Present multiple interpretations - no silent picks.
+- If simpler approach exist, say so. Push back if warranted.
+- If unclear, stop. Name confusion. Ask.
 
 ## 2. Simplicity First
 
-**Minimum code that solves the problem. Nothing speculative.**
+**Minimum code solve problem. Nothing speculative.**
 
-- No features beyond what was asked.
-- No abstractions for single-use code.
-- No "flexibility" or "configurability" that wasn't requested.
-- No error handling for impossible scenarios.
-- If you write 200 lines and it could be 50, rewrite it.
+- No extra features.
+- No abstractions for single-use.
+- No unrequested flexibility.
+- No error handling for impossible.
+- Write 50 lines, not 200.
 
-Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
+Ask: "Overcomplicated for senior engineer?" If yes, simplify.
 
 ## 3. Surgical Changes
 
-**Touch only what you must. Clean up only your own mess.**
+**Touch only what must. Clean own mess.**
 
-When editing existing code:
+When edit existing:
 
-- Don't "improve" adjacent code, comments, or formatting.
-- Don't refactor things that aren't broken.
-- Match existing style, even if you'd do it differently.
-- If you notice unrelated dead code, mention it - don't delete it.
+- No "improvement" of adjacent code/format.
+- No refactor of working code.
+- Match existing style.
+- Mention dead code, do not delete.
 
-When your changes create orphans:
+When create orphans:
 
-- Remove imports/variables/functions that YOUR changes made unused.
-- Don't remove pre-existing dead code unless asked.
+- Remove unused imports/vars/fns from YOUR changes.
+- Do not remove pre-existing dead code.
 
-The test: Every changed line should trace directly to the user's request.
+Test: Every line trace to request.
 
 ## 4. Goal-Driven Execution
 
 **Define success criteria. Loop until verified.**
 
-Transform tasks into verifiable goals:
+Transform tasks to goals:
 
-- "Add validation" → "Write tests for invalid inputs, then make them pass"
-- "Fix the bug" → "Write a test that reproduces it, then make it pass"
-- "Refactor X" → "Ensure tests pass before and after"
+- "Add validation" → "Tests for invalid input, then pass"
+- "Fix bug" → "Test reproduce, then pass"
+- "Refactor X" → "Tests pass before and after"
 
-For multi-step tasks, state a brief plan:
+Multi-step plan:
 
 ```
 1. [Step] → verify: [check]
@@ -61,24 +61,21 @@ For multi-step tasks, state a brief plan:
 3. [Step] → verify: [check]
 ```
 
-Strong success criteria let you loop independently. Weak criteria ("make it work") require constant
-clarification.
+Strong criteria allow independent looping.
 
 ---
 
 # Jetpack Compose Expert
 
-For all Jetpack Compose tasks, follow the workflow and checklists in
-`skills/compose-expert/SKILL.md`.
+For Compose tasks, follow `skills/compose-expert/SKILL.md`.
 
-Before answering any Compose question, consult the relevant reference:
+Consult references before answer:
 
 - State management -> `skills/compose-expert/references/state-management.md`
 - Performance -> `skills/compose-expert/references/performance.md`
 - Navigation -> `skills/compose-expert/references/navigation.md`
-- (see SKILL.md for the full topic -> file mapping)
+- (see SKILL.md for map)
 
-For implementation details, check actual source code in
-`skills/compose-expert/references/source-code/`.
+Check source in `skills/compose-expert/references/source-code/`.
 
 ---
