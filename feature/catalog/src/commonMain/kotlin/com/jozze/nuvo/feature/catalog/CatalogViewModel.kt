@@ -29,6 +29,7 @@ class CatalogViewModel(
 
     private fun addToCart(product: Product) {
         viewModelScope.launch {
+            val currentStore = state.store
             try {
                 val cartItem = CartItem(
                     id = product.id,
@@ -36,7 +37,7 @@ class CatalogViewModel(
                     name = product.name,
                     priceCents = product.priceCents,
                     quantity = 1,
-                    storeId = state.store?.id ?: "",
+                    storeId = currentStore?.id ?: "",
                     imageUrl = product.imageUrl
                 )
                 cartRepository.addItem(cartItem)

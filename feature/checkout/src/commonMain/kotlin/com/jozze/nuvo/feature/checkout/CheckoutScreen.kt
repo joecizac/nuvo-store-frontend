@@ -57,7 +57,7 @@ fun CheckoutScreen(
                         }
                         Button(
                             onClick = { viewModel.onIntent(CheckoutContract.Intent.PlaceOrder) },
-                            enabled = !state.isPlacingOrder && state.selectedAddressId != null
+                            enabled = !state.isPlacingOrder && !state.isLoading && state.selectedAddressId != null && state.cartItems.isNotEmpty()
                         ) {
                             if (state.isPlacingOrder) {
                                 CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
@@ -109,7 +109,10 @@ fun CheckoutScreen(
             }
 
             item {
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    thickness = 1.dp
+                )
                 Text("Order Summary", style = MaterialTheme.typography.titleLarge)
             }
 

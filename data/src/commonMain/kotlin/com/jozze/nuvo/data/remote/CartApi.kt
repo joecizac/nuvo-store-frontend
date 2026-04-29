@@ -7,7 +7,8 @@ import io.ktor.http.*
 
 class CartApi(private val client: HttpClient) {
     suspend fun getCart(): List<CartItem> {
-        // Mock API call
+        // Mock API call: return empty by default for clean test state
+        // In a real app, this would fetch from the server
         return emptyList()
     }
 

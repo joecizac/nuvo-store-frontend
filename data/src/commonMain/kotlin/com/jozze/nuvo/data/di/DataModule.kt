@@ -9,10 +9,15 @@ import com.jozze.nuvo.data.remote.StoreApi
 import com.jozze.nuvo.data.remote.UserApi
 import com.jozze.nuvo.data.repository.*
 import com.jozze.nuvo.domain.repository.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import org.koin.dsl.module
 
 val dataModule = module {
     includes(platformDataModule)
+
+    single { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
 
     single { get<NuvoDatabase>().cartDao() }
 
@@ -30,7 +35,7 @@ val dataModule = module {
     single<CatalogRepository> { CatalogRepositoryImpl(get()) }
 
     single { CartApi(get()) }
-    single<CartRepository> { CartRepositoryImpl(get(), get()) }
+    single<CartRepository> { CartRepositoryImpl(get(), get(), get()) }
 
     single { OrderApi(get()) }
     single<OrderRepository> { OrderRepositoryImpl(get()) }

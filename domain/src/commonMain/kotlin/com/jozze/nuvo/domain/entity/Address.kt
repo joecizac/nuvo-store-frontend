@@ -11,6 +11,6 @@ data class Address(
     val addressLine: String,
     val city: String = "",
     val state: String = "",
-    val country: String = "US",
+    val country: String = "",
     val isDefault: Boolean
 )

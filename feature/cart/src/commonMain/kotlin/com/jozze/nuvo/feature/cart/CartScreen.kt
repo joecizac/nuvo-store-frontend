@@ -1,5 +1,6 @@
 package com.jozze.nuvo.feature.cart
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -116,7 +117,9 @@ fun CartItemCard(
             AsyncImage(
                 model = item.imageUrl,
                 contentDescription = item.name,
-                modifier = Modifier.size(64.dp),
+                modifier = Modifier
+                    .size(64.dp)
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentScale = ContentScale.Crop
             )
             Column(modifier = Modifier.weight(1f)) {

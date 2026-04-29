@@ -6,6 +6,8 @@ import com.jozze.nuvo.data.remote.CartApi
 import com.jozze.nuvo.domain.entity.CartItem
 import com.jozze.nuvo.domain.exception.DifferentStoreCartException
 import io.ktor.client.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
@@ -24,7 +26,7 @@ class CartRepositoryImplTest {
     fun setup() {
         fakeDao = FakeCartDao()
         fakeApi = CartApi(HttpClient())
-        repository = CartRepositoryImpl(fakeDao, fakeApi)
+        repository = CartRepositoryImpl(fakeDao, fakeApi, CoroutineScope(SupervisorJob()))
     }
 
     @Test
@@ -69,6 +71,10 @@ class FakeCartDao : CartDao {
     private val _flow = MutableStateFlow<List<CartItemEntity>>(emptyList())
 
     override fun getCartItems(): Flow<List<CartItemEntity>> = _flow
+
+    override suspend fun getAllItems(): List<CartItemEntity> = items.values.toList()
+
+    override suspend fun getById(id: String): CartItemEntity? = items[id]
 
     override suspend fun insert(item: CartItemEntity) {
         items[item.id] = item

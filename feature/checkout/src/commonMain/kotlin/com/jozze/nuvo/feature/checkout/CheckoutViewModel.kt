@@ -5,8 +5,8 @@ import com.jozze.nuvo.core.mvi.BaseViewModel
 import com.jozze.nuvo.domain.repository.CartRepository
 import com.jozze.nuvo.domain.repository.OrderRepository
 import com.jozze.nuvo.domain.repository.UserRepository
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class CheckoutViewModel(
@@ -16,6 +16,7 @@ class CheckoutViewModel(
 ) : BaseViewModel<CheckoutContract.State, CheckoutContract.Intent, CheckoutContract.Effect>(CheckoutContract.State()) {
 
     init {
+        observeCart()
         handleIntent(CheckoutContract.Intent.LoadData)
     }
 
@@ -27,25 +28,30 @@ class CheckoutViewModel(
         }
     }
 
+    private fun observeCart() {
+        cartRepository.getCartItems()
+            .onEach { items ->
+                setState { copy(cartItems = items) }
+            }
+            .launchIn(viewModelScope)
+    }
+
     private fun loadData() {
         viewModelScope.launch {
             setState { copy(isLoading = true) }
-            val cartItemsDeferred = async { cartRepository.getCartItems().firstOrNull() }
             val addressesResult = userRepository.getMyAddresses()
-
-            val cartItems = cartItemsDeferred.await() ?: emptyList()
-            val addresses = addressesResult.getOrDefault(emptyList())
 
             if (addressesResult.isFailure) {
                 emitEffect(CheckoutContract.Effect.ShowError(addressesResult.exceptionOrNull()?.message ?: "Failed to load addresses"))
             }
 
+            val addresses = addressesResult.getOrDefault(emptyList())
+
             setState {
                 copy(
                     isLoading = false,
-                    cartItems = cartItems,
                     addresses = addresses,
-                    selectedAddressId = addresses.firstOrNull()?.id
+                    selectedAddressId = state.selectedAddressId ?: addresses.firstOrNull { it.isDefault }?.id ?: addresses.firstOrNull()?.id
                 )
             }
         }
