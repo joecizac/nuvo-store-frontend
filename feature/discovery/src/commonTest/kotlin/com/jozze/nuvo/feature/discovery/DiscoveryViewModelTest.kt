@@ -38,7 +38,16 @@ class DiscoveryViewModelTest {
     @Test
     fun `loadNearbyStores success updates state with stores`() = runTest {
         val mockStores = listOf(
-            Store("1", "Store 1", "", null, 0.0, 0.0, 4.5, 1.0)
+            Store(
+                id = "1",
+                name = "Store 1",
+                description = "",
+                imageUrl = null,
+                latitude = 0.0,
+                longitude = 0.0,
+                rating = 4.5,
+                distance = 1.0
+            )
         )
         repository.storesResult = Result.success(mockStores)
 

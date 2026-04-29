@@ -49,9 +49,28 @@ class CatalogViewModelTest {
 
     @Test
     fun `loadCatalog success updates state`() = runTest {
-        val store = Store("1", "Store 1", "", null, 0.0, 0.0, 4.5, 1.0)
-        val categories = listOf(Category("1", "Cat 1", null))
-        val products = listOf(Product("1", "Prod 1", "", 100, null, true, "1"))
+        val store = Store(
+            id = "1",
+            name = "Store 1",
+            description = "",
+            imageUrl = null,
+            latitude = 0.0,
+            longitude = 0.0,
+            rating = 4.5,
+            distance = 1.0
+        )
+        val categories = listOf(Category(id = "1", name = "Cat 1", imageUrl = null))
+        val products = listOf(
+            Product(
+                id = "1",
+                name = "Prod 1",
+                description = "",
+                priceCents = 100,
+                imageUrl = null,
+                isAvailable = true,
+                categoryId = "1"
+            )
+        )
 
         storeRepository.storeResult = Result.success(store)
         catalogRepository.categoriesResult = Result.success(categories)
@@ -68,7 +87,17 @@ class CatalogViewModelTest {
 
     @Test
     fun `filterByCategory updates products`() = runTest {
-        val products = listOf(Product("1", "Prod 1", "", 100, null, true, "1"))
+        val products = listOf(
+            Product(
+                id = "1",
+                name = "Prod 1",
+                description = "",
+                priceCents = 100,
+                imageUrl = null,
+                isAvailable = true,
+                categoryId = "1"
+            )
+        )
         catalogRepository.productsResult = Result.success(products)
 
         viewModel.onIntent(CatalogIntent.FilterByCategory("1", "cat1"))
@@ -80,7 +109,15 @@ class CatalogViewModelTest {
 
     @Test
     fun `addToCart with different store shows dialog`() = runTest {
-        val product = Product("1", "Prod 1", "", 100, null, true, "1")
+        val product = Product(
+            id = "1",
+            name = "Prod 1",
+            description = "",
+            priceCents = 100,
+            imageUrl = null,
+            isAvailable = true,
+            categoryId = "1"
+        )
         cartRepository.shouldThrowDifferentStore = true
 
         viewModel.onIntent(CatalogIntent.AddToCart(product))
@@ -91,7 +128,15 @@ class CatalogViewModelTest {
 
     @Test
     fun `clearCartAndAdd clears dialog and adds item`() = runTest {
-        val product = Product("1", "Prod 1", "", 100, null, true, "1")
+        val product = Product(
+            id = "1",
+            name = "Prod 1",
+            description = "",
+            priceCents = 100,
+            imageUrl = null,
+            isAvailable = true,
+            categoryId = "1"
+        )
         
         viewModel.onIntent(CatalogIntent.ClearCartAndAdd(product))
         advanceUntilIdle()
@@ -125,7 +170,13 @@ class FakeCartRepository : CartRepository {
         if (shouldThrowDifferentStore) throw DifferentStoreCartException("1", "2")
         lastAddedItem = item
     }
-    override suspend fun updateQuantity(itemId: String, quantity: Int) {}
-    override suspend fun removeItem(itemId: String) {}
-    override suspend fun clearCart() {}
+    override suspend fun updateQuantity(itemId: String, quantity: Int) {
+        // TODO: complete mock for update/remove in full UI testing phase
+    }
+    override suspend fun removeItem(itemId: String) {
+        // TODO: complete mock for update/remove in full UI testing phase
+    }
+    override suspend fun clearCart() {
+        // TODO: complete mock for update/remove in full UI testing phase
+    }
 }

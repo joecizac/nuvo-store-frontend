@@ -55,6 +55,7 @@ Architecture.
 - [ ] FCM Integration for Order Status updates.
 - [ ] Reviews & Ratings implementation.
 - [ ] Favourites (Store/Product) toggle.
+- [ ] Migrate to `jetbrains.compose.resources` for localization and assets.
 - [ ] Final UI/UX polish (Material 3 Expressive details).
 - [ ] Multi-industry branding support (Configurable themes/labels).
 
