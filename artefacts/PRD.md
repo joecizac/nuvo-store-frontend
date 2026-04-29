@@ -41,6 +41,7 @@ Architecture.
 - [x] Geolocation integration (Lat/Lng query).
 - [x] `feature:catalog`: Store detail screen.
 - [x] Category & Product listing via `api/v1/stores/{id}/products`.
+- [x] Unit tests for Discovery & Catalog components.
 
 ### Phase 4: Cart & Order Management
 

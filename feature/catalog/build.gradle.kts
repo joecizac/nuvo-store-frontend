@@ -36,6 +36,10 @@ kotlin {
             implementation(compose.material3)
             implementation(compose.materialIconsExtended)
         }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
+        }
     }
 }
 
