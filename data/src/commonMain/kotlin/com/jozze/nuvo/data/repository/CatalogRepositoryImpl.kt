@@ -19,10 +19,10 @@ class CatalogRepositoryImpl(private val api: CatalogApi) : CatalogRepository {
     override suspend fun getProducts(storeId: String, categoryId: String?): Result<List<Product>> {
         // Return mock data for testing
         val mockProducts = listOf(
-            Product("1", "Latte", "Smooth espresso with steamed milk", 4.5, null, true, "1"),
-            Product("2", "Cappuccino", "Classic espresso with foamed milk", 4.0, null, true, "1"),
-            Product("3", "Croissant", "Buttery and flaky", 3.5, null, true, "2"),
-            Product("4", "Pain au Chocolat", "Croissant with chocolate", 4.0, null, true, "2")
+            Product("1", "Latte", "Smooth espresso with steamed milk", 450, null, true, "1"),
+            Product("2", "Cappuccino", "Classic espresso with foamed milk", 400, null, true, "1"),
+            Product("3", "Croissant", "Buttery and flaky", 350, null, true, "2"),
+            Product("4", "Pain au Chocolat", "Croissant with chocolate", 400, null, true, "2")
         ).filter { categoryId == null || it.categoryId == categoryId }
 
         return Result.success(mockProducts)

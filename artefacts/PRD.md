@@ -44,10 +44,10 @@ Architecture.
 
 ### Phase 4: Cart & Order Management
 
-- [ ] `data:local`: Room KMP for local cart persistence.
-- [ ] `feature:cart`: Add/Update/Remove items via `api/v1/cart`.
-- [ ] Logic for single-store cart restriction.
-- [ ] `feature:checkout`: Address selection + Place order (`api/v1/orders`).
+- [x] `data:local`: Room KMP for local cart persistence.
+- [x] `feature:cart`: Add/Update/Remove items via `api/v1/cart`.
+- [x] Logic for single-store cart restriction.
+- [x] `feature:checkout`: Address selection + Place order (`api/v1/orders`).
 
 ### Phase 5: Polishing & Real-time Features
 

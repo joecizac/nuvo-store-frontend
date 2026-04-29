@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 
 class AuthViewModel(
     private val authRepository: AuthRepository
-) : BaseViewModel<AuthState, AuthIntent>(AuthState.Idle) {
+) : BaseViewModel<AuthState, AuthIntent, AuthEffect>(AuthState.Idle) {
 
     init {
         observeUser()

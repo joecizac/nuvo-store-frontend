@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 
 class DiscoveryViewModel(
     private val storeRepository: StoreRepository
-) : BaseViewModel<DiscoveryState, DiscoveryIntent>(DiscoveryState()) {
+) : BaseViewModel<DiscoveryState, DiscoveryIntent, DiscoveryEffect>(DiscoveryState()) {
 
     override fun handleIntent(intent: DiscoveryIntent) {
         when (intent) {

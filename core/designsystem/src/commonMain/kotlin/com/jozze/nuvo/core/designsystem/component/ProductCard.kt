@@ -54,7 +54,7 @@ fun ProductCard(
                     )
                 }
                 Text(
-                    text = "$${product.price}",
+                    text = "$${product.priceAmount}",
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(top = 4.dp)

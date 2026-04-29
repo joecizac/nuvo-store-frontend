@@ -14,19 +14,28 @@ import kotlinx.coroutines.launch
  *
  * @param S The UI state type.
  * @param I The UI intent type.
+ * @param E The UI effect type.
  */
-abstract class BaseViewModel<S : MviState, I : MviIntent>(
+abstract class BaseViewModel<S : MviState, I : MviIntent, E : MviEffect>(
     initialState: S
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(initialState)
     val uiState = _uiState.asStateFlow()
 
+    protected val state: S get() = _uiState.value
+
     private val _intent = MutableSharedFlow<I>(
         extraBufferCapacity = 16,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
     private val intent = _intent.asSharedFlow()
+
+    private val _effect = MutableSharedFlow<E>(
+        extraBufferCapacity = 16,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val effect = _effect.asSharedFlow()
 
     init {
         viewModelScope.launch {
@@ -51,5 +60,12 @@ abstract class BaseViewModel<S : MviState, I : MviIntent>(
      */
     protected fun setState(reducer: S.() -> S) {
         _uiState.value = _uiState.value.reducer()
+    }
+
+    /**
+     * Emits a side effect.
+     */
+    protected fun emitEffect(effect: E) {
+        _effect.tryEmit(effect)
     }
 }

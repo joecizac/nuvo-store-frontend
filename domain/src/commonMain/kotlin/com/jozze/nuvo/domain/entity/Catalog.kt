@@ -14,8 +14,10 @@ data class Product(
     val id: String,
     val name: String,
     val description: String?,
-    val price: Double,
+    val priceCents: Long,
     val imageUrl: String?,
     val isAvailable: Boolean,
     val categoryId: String?
-)
+) {
+    val priceAmount: Double get() = priceCents / 100.0
+}

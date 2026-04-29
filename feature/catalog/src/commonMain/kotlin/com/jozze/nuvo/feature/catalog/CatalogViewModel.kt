@@ -2,6 +2,10 @@ package com.jozze.nuvo.feature.catalog
 
 import androidx.lifecycle.viewModelScope
 import com.jozze.nuvo.core.mvi.BaseViewModel
+import com.jozze.nuvo.domain.entity.CartItem
+import com.jozze.nuvo.domain.entity.Product
+import com.jozze.nuvo.domain.exception.DifferentStoreCartException
+import com.jozze.nuvo.domain.repository.CartRepository
 import com.jozze.nuvo.domain.repository.CatalogRepository
 import com.jozze.nuvo.domain.repository.StoreRepository
 import kotlinx.coroutines.async
@@ -9,13 +13,45 @@ import kotlinx.coroutines.launch
 
 class CatalogViewModel(
     private val storeRepository: StoreRepository,
-    private val catalogRepository: CatalogRepository
-) : BaseViewModel<CatalogState, CatalogIntent>(CatalogState()) {
+    private val catalogRepository: CatalogRepository,
+    private val cartRepository: CartRepository
+) : BaseViewModel<CatalogState, CatalogIntent, CatalogContract.Effect>(CatalogState()) {
 
     override fun handleIntent(intent: CatalogIntent) {
         when (intent) {
             is CatalogIntent.LoadCatalog -> loadCatalog(intent.storeId)
             is CatalogIntent.FilterByCategory -> filterByCategory(intent.storeId, intent.categoryId)
+            is CatalogIntent.AddToCart -> addToCart(intent.product)
+            is CatalogIntent.ClearCartAndAdd -> clearCartAndAdd(intent.product)
+            is CatalogIntent.DismissDialog -> setState { copy(showClearCartDialog = null) }
+        }
+    }
+
+    private fun addToCart(product: Product) {
+        viewModelScope.launch {
+            try {
+                val cartItem = CartItem(
+                    id = product.id,
+                    productId = product.id,
+                    name = product.name,
+                    priceCents = product.priceCents,
+                    quantity = 1,
+                    storeId = state.store?.id ?: "",
+                    imageUrl = product.imageUrl
+                )
+                cartRepository.addItem(cartItem)
+                emitEffect(CatalogContract.Effect.ShowSnackbar("${product.name} added to cart"))
+            } catch (e: DifferentStoreCartException) {
+                setState { copy(showClearCartDialog = product) }
+            }
+        }
+    }
+
+    private fun clearCartAndAdd(product: Product) {
+        viewModelScope.launch {
+            cartRepository.clearCart()
+            addToCart(product)
+            setState { copy(showClearCartDialog = null) }
         }
     }
 
