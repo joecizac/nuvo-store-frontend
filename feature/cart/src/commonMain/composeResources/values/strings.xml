@@ -6,4 +6,5 @@
     <string name="clear_cart">Clear Cart</string>
     <string name="decrease">Decrease</string>
     <string name="increase">Increase</string>
+    <string name="back">Back</string>
 </resources>

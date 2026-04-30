@@ -7,4 +7,6 @@
     <string name="add_address">Add Address</string>
     <string name="failed_to_load_addresses">Failed to load addresses</string>
     <string name="failed_to_place_order">Failed to place order</string>
+    <string name="back">Back</string>
+    <string name="total">Total</string>
 </resources>

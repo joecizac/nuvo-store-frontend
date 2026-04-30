@@ -55,6 +55,9 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.android)
         }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
     }
 }
 
