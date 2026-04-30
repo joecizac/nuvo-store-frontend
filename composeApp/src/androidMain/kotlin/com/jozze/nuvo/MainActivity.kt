@@ -17,6 +17,7 @@ class MainActivity : ComponentActivity() {
 
         initKoin {
             androidContext(this@MainActivity)
+            properties(mapOf("SERVER_URL" to "http://10.0.2.2:8080/"))
         }
 
         setContent {

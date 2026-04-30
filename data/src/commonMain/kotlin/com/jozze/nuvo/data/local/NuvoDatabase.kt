@@ -22,7 +22,6 @@ abstract class NuvoDatabase : RoomDatabase() {
 }
 
 // The Room compiler generates the actual implementation.
-@Suppress("NO_ACTUAL_FOR_EXPECT")
 expect object NuvoDatabaseConstructor : RoomDatabaseConstructor<NuvoDatabase> {
     override fun initialize(): NuvoDatabase
 }

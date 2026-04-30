@@ -5,6 +5,8 @@ import com.jozze.nuvo.di.initKoin
 
 fun MainViewController() = ComposeUIViewController(
     configure = {
-        initKoin()
+        initKoin {
+            properties(mapOf("SERVER_URL" to "http://localhost:8080/"))
+        }
     }
 ) { App() }

@@ -33,7 +33,7 @@ val networkModule = module {
                 logger = Logger.DEFAULT
             }
 
-            val baseUrl = getProperty("SERVER_URL", "https://api.nuvostore.com/")
+            val baseUrl = getProperty("SERVER_URL", "http://localhost:8080/")
             defaultRequest {
                 url(baseUrl)
             }
