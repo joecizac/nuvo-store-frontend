@@ -22,6 +22,7 @@ val dataModule = module {
     }
 
     single { get<NuvoDatabase>().cartDao() }
+    single { get<NuvoDatabase>().favouriteDao() }
 
     single { AuthRepositoryImpl() }
     single<AuthRepository> { get<AuthRepositoryImpl>() }
@@ -41,4 +42,6 @@ val dataModule = module {
 
     single { OrderApi(get()) }
     single<OrderRepository> { OrderRepositoryImpl(get()) }
+
+    single<FavouriteRepository> { FavouriteRepositoryImpl(get()) }
 }

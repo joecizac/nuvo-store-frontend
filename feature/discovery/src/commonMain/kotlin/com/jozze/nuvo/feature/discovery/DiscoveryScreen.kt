@@ -2,6 +2,7 @@ package com.jozze.nuvo.feature.discovery
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -9,6 +10,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -25,12 +28,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.jozze.nuvo.core.designsystem.component.StoreCard
+import nuvostore.feature.discovery.generated.resources.Res
+import nuvostore.feature.discovery.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DiscoveryScreen(
     onStoreClick: (String) -> Unit,
+    onCartClick: () -> Unit,
     onLogout: () -> Unit,
     viewModel: DiscoveryViewModel = koinViewModel()
 ) {
@@ -44,10 +51,13 @@ fun DiscoveryScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Discovery") },
+                title = { Text(stringResource(Res.string.discovery_title)) },
                 actions = {
+                    IconButton(onClick = onCartClick) {
+                        Icon(Icons.Default.ShoppingCart, contentDescription = "Cart")
+                    }
                     IconButton(onClick = onLogout) {
-                        Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = "Logout")
+                        Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = stringResource(Res.string.logout))
                     }
                 }
             )
@@ -76,12 +86,21 @@ fun DiscoveryScreen(
                     items(state.stores) { store ->
                         StoreCard(
                             store = store,
-                            onClick = { onStoreClick(store.id) }
+                            onClick = { onStoreClick(store.id) },
+                            onFavouriteToggle = { viewModel.onIntent(DiscoveryIntent.ToggleFavourite(store.id)) }
                         )
                     }
                 }
             } else if (!state.isLoading && state.error == null) {
-                Text("No stores found nearby.")
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(stringResource(Res.string.no_stores_found))
+                    Button(onClick = { viewModel.onIntent(DiscoveryIntent.LoadNearbyStores(-33.9, 18.4, 50000)) }) {
+                        Text(stringResource(Res.string.retry))
+                    }
+                }
             }
         }
     }

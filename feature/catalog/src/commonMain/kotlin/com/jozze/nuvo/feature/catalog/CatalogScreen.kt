@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,6 +22,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.jozze.nuvo.core.designsystem.component.ProductCard
+import nuvostore.feature.catalog.generated.resources.Res
+import nuvostore.feature.catalog.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,6 +32,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun CatalogScreen(
     storeId: String,
     onBack: () -> Unit,
+    onCartClick: () -> Unit,
     viewModel: CatalogViewModel = koinViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
@@ -51,10 +56,15 @@ fun CatalogScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text(state.store?.name ?: "Catalog") },
+                title = { Text(state.store?.name ?: stringResource(Res.string.catalog_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.back))
+                    }
+                },
+                actions = {
+                    IconButton(onClick = onCartClick) {
+                        Icon(Icons.Default.ShoppingCart, contentDescription = "Cart")
                     }
                 }
             )
@@ -93,7 +103,7 @@ fun CatalogScreen(
                                     )
                                 )
                             },
-                            label = { Text("All") }
+                            label = { Text(stringResource(Res.string.all_categories)) }
                         )
                     }
                     items(state.categories) { category ->
@@ -121,7 +131,8 @@ fun CatalogScreen(
                 items(state.products) { product ->
                     ProductCard(
                         product = product,
-                        onAddToCart = { viewModel.onIntent(CatalogIntent.AddToCart(product)) }
+                        onAddToCart = { viewModel.onIntent(CatalogIntent.AddToCart(product)) },
+                        onFavouriteToggle = { viewModel.onIntent(CatalogIntent.ToggleFavourite(product.id)) }
                     )
                 }
             }
@@ -129,16 +140,16 @@ fun CatalogScreen(
             state.showClearCartDialog?.let { product ->
                 AlertDialog(
                     onDismissRequest = { viewModel.onIntent(CatalogIntent.DismissDialog) },
-                    title = { Text(TITLE_CLEAR_CART) },
-                    text = { Text(MSG_CLEAR_CART) },
+                    title = { Text(stringResource(Res.string.clear_cart_title)) },
+                    text = { Text(stringResource(Res.string.clear_cart_msg)) },
                     confirmButton = {
                         Button(onClick = { viewModel.onIntent(CatalogIntent.ClearCartAndAdd(product)) }) {
-                            Text(BTN_CLEAR_AND_ADD)
+                            Text(stringResource(Res.string.clear_and_add))
                         }
                     },
                     dismissButton = {
                         TextButton(onClick = { viewModel.onIntent(CatalogIntent.DismissDialog) }) {
-                            Text(BTN_CANCEL)
+                            Text(stringResource(Res.string.cancel))
                         }
                     }
                 )
@@ -146,8 +157,3 @@ fun CatalogScreen(
         }
     }
 }
-
-private const val TITLE_CLEAR_CART = "Clear cart?"
-private const val MSG_CLEAR_CART = "Your cart contains items from a different store. Do you want to clear it and add this item?"
-private const val BTN_CLEAR_AND_ADD = "Clear and Add"
-private const val BTN_CANCEL = "Cancel"

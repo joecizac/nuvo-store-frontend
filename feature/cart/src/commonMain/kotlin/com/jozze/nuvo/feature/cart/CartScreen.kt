@@ -20,6 +20,9 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.jozze.nuvo.domain.entity.CartItem
 import com.jozze.nuvo.util.format
+import nuvostore.feature.cart.generated.resources.Res
+import nuvostore.feature.cart.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,16 +37,16 @@ fun CartScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("My Cart") },
+                title = { Text(stringResource(Res.string.my_cart)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.back))
                     }
                 },
                 actions = {
                     if (state.items.isNotEmpty()) {
                         IconButton(onClick = { viewModel.onIntent(CartContract.Intent.ClearCart) }) {
-                            Icon(Icons.Default.Delete, contentDescription = "Clear Cart")
+                            Icon(Icons.Default.Delete, contentDescription = stringResource(Res.string.clear_cart))
                         }
                     }
                 }
@@ -62,11 +65,11 @@ fun CartScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column {
-                            Text("Total", style = MaterialTheme.typography.labelMedium)
+                            Text(stringResource(Res.string.total), style = MaterialTheme.typography.labelMedium)
                             Text("$${totalAmount.format(2)}", style = MaterialTheme.typography.headlineSmall)
                         }
                         Button(onClick = onCheckout) {
-                            Text("Checkout")
+                            Text(stringResource(Res.string.checkout))
                         }
                     }
                 }
@@ -75,7 +78,7 @@ fun CartScreen(
     ) { padding ->
         if (state.items.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                Text("Your cart is empty")
+                Text(stringResource(Res.string.cart_empty))
             }
         } else {
             LazyColumn(
@@ -131,11 +134,14 @@ fun CartItemCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 IconButton(onClick = { if (item.quantity > 1) onUpdateQuantity(item.quantity - 1) else onRemove() }) {
-                    Icon(if (item.quantity > 1) Icons.Default.Remove else Icons.Default.Delete, contentDescription = "Decrease")
+                    Icon(
+                        imageVector = if (item.quantity > 1) Icons.Default.Remove else Icons.Default.Delete,
+                        contentDescription = stringResource(if (item.quantity > 1) Res.string.decrease else Res.string.clear_cart)
+                    )
                 }
                 Text("${item.quantity}", style = MaterialTheme.typography.titleMedium)
                 IconButton(onClick = { onUpdateQuantity(item.quantity + 1) }) {
-                    Icon(Icons.Default.Add, contentDescription = "Increase")
+                    Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.increase))
                 }
             }
         }

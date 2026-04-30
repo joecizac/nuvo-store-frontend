@@ -1,0 +1,10 @@
+<resources>
+    <string name="checkout_title">Checkout</string>
+    <string name="place_order">Place Order</string>
+    <string name="select_address">Select Delivery Address</string>
+    <string name="order_summary">Order Summary</string>
+    <string name="no_addresses">No addresses found.</string>
+    <string name="add_address">Add Address</string>
+    <string name="failed_to_load_addresses">Failed to load addresses</string>
+    <string name="failed_to_place_order">Failed to place order</string>
+</resources>

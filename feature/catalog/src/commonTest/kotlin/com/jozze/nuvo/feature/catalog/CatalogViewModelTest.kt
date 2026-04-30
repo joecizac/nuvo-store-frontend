@@ -7,11 +7,14 @@ import com.jozze.nuvo.domain.entity.Store
 import com.jozze.nuvo.domain.exception.DifferentStoreCartException
 import com.jozze.nuvo.domain.repository.CartRepository
 import com.jozze.nuvo.domain.repository.CatalogRepository
+import com.jozze.nuvo.domain.repository.FavouriteRepository
 import com.jozze.nuvo.domain.repository.StoreRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -23,6 +26,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class CatalogViewModelTest {
@@ -32,6 +36,7 @@ class CatalogViewModelTest {
     private lateinit var storeRepository: FakeStoreRepository
     private lateinit var catalogRepository: FakeCatalogRepository
     private lateinit var cartRepository: FakeCartRepository
+    private lateinit var favouriteRepository: FakeFavouriteRepository
 
     @BeforeTest
     fun setup() {
@@ -39,7 +44,16 @@ class CatalogViewModelTest {
         storeRepository = FakeStoreRepository()
         catalogRepository = FakeCatalogRepository()
         cartRepository = FakeCartRepository()
-        viewModel = CatalogViewModel(storeRepository, catalogRepository, cartRepository)
+        favouriteRepository = FakeFavouriteRepository()
+        
+        // Defaults for successful loadCatalog
+        storeRepository.storeResult = Result.success(
+            Store("1", "Store 1", "", null, 0.0, 0.0, 4.5, 1.0)
+        )
+        catalogRepository.categoriesResult = Result.success(emptyList())
+        catalogRepository.productsResult = Result.success(emptyList())
+        
+        viewModel = CatalogViewModel(storeRepository, catalogRepository, cartRepository, favouriteRepository)
     }
 
     @AfterTest
@@ -83,6 +97,34 @@ class CatalogViewModelTest {
         assertEquals(categories, viewModel.uiState.value.categories)
         assertEquals(products, viewModel.uiState.value.products)
         assertFalse(viewModel.uiState.value.isLoading)
+    }
+
+    @Test
+    fun `toggleProductFavourite updates product favourite status`() = runTest {
+        val products = listOf(
+            Product(
+                id = "1",
+                name = "Prod 1",
+                description = "",
+                priceCents = 100,
+                imageUrl = null,
+                isAvailable = true,
+                categoryId = "1"
+            )
+        )
+        catalogRepository.productsResult = Result.success(products)
+
+        // Load catalog
+        viewModel.onIntent(CatalogIntent.LoadCatalog("1"))
+        advanceUntilIdle()
+        assertEquals(1, viewModel.uiState.value.products.size)
+        assertFalse(viewModel.uiState.value.products.first().isFavourite)
+
+        // Toggle
+        viewModel.onIntent(CatalogIntent.ToggleFavourite("1"))
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.products.first().isFavourite)
     }
 
     @Test
@@ -179,4 +221,27 @@ class FakeCartRepository : CartRepository {
     override suspend fun clearCart() {
         // TODO: complete mock for update/remove in full UI testing phase
     }
+}
+
+class FakeFavouriteRepository : FavouriteRepository {
+    private val favouriteStores = MutableStateFlow<List<String>>(emptyList())
+    private val favouriteProducts = MutableStateFlow<List<String>>(emptyList())
+
+    override fun getFavouriteStores(): Flow<List<String>> = favouriteStores
+    override suspend fun toggleStoreFavourite(storeId: String) {
+        val current = favouriteStores.value.toMutableList()
+        if (current.contains(storeId)) current.remove(storeId) else current.add(storeId)
+        favouriteStores.value = current
+    }
+    override fun isStoreFavourite(storeId: String): Flow<Boolean> = 
+        favouriteStores.map { it.contains(storeId) }
+
+    override fun getFavouriteProducts(): Flow<List<String>> = favouriteProducts
+    override suspend fun toggleProductFavourite(productId: String) {
+        val current = favouriteProducts.value.toMutableList()
+        if (current.contains(productId)) current.remove(productId) else current.add(productId)
+        favouriteProducts.value = current
+    }
+    override fun isProductFavourite(productId: String): Flow<Boolean> = 
+        favouriteProducts.map { it.contains(productId) }
 }

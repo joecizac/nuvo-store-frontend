@@ -26,5 +26,6 @@ sealed interface CatalogIntent : MviIntent {
     data class FilterByCategory(val storeId: String, val categoryId: String?) : CatalogIntent
     data class AddToCart(val product: Product) : CatalogIntent
     data class ClearCartAndAdd(val product: Product) : CatalogIntent
+    data class ToggleFavourite(val productId: String) : CatalogIntent
     object DismissDialog : CatalogIntent
 }

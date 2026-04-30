@@ -1,0 +1,6 @@
+<resources>
+    <string name="discovery_title">Discovery</string>
+    <string name="no_stores_found">No stores found nearby.</string>
+    <string name="logout">Logout</string>
+    <string name="retry">Retry</string>
+</resources>

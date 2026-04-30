@@ -31,6 +31,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import nuvostore.feature.auth.generated.resources.Res
+import nuvostore.feature.auth.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -57,7 +60,7 @@ fun AuthScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Nuvo Store",
+            text = stringResource(Res.string.app_name),
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.primary
         )
@@ -67,7 +70,7 @@ fun AuthScreen(
         TextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email") },
+            label = { Text(stringResource(Res.string.email)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             modifier = Modifier.fillMaxWidth()
         )
@@ -77,13 +80,17 @@ fun AuthScreen(
         TextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password") },
+            label = { Text(stringResource(Res.string.password)) },
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             trailingIcon = {
                 val icon =
                     if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
-                val description = if (passwordVisible) "Hide password" else "Show password"
+                val description = if (passwordVisible) {
+                    stringResource(Res.string.hide_password)
+                } else {
+                    stringResource(Res.string.show_password)
+                }
 
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
                     Icon(imageVector = icon, contentDescription = description)
@@ -101,7 +108,7 @@ fun AuthScreen(
                 onClick = { viewModel.onIntent(AuthIntent.Login(email, password)) },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Login")
+                Text(stringResource(Res.string.login))
             }
         }
 

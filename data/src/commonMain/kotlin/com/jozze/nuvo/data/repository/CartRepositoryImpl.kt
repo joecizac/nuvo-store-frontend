@@ -70,10 +70,10 @@ class CartRepositoryImpl(
         syncTrigger.tryEmit(Unit)
     }
 
-    @OptIn(FlowPreview::class)
+    @OptIn(kotlinx.coroutines.FlowPreview::class)
     private fun observeSyncTrigger() {
         syncTrigger
-            .debounce(2000L) // Wait for 2s of inactivity before syncing
+            .debounce(500L) // Wait for 500ms of inactivity before syncing
             .onEach {
                 syncWithRemote()
             }

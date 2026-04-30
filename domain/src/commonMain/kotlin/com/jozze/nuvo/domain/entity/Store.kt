@@ -11,5 +11,6 @@ data class Store(
     val latitude: Double,
     val longitude: Double,
     val rating: Double,
-    val distance: Double? = null
+    val distance: Double? = null,
+    val isFavourite: Boolean = false
 )

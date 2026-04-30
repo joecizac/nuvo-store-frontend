@@ -13,6 +13,8 @@ import com.jozze.nuvo.feature.auth.AuthViewModel
 import com.jozze.nuvo.feature.auth.AuthIntent
 import com.jozze.nuvo.feature.catalog.CatalogScreen
 import com.jozze.nuvo.feature.discovery.DiscoveryScreen
+import com.jozze.nuvo.feature.cart.CartScreen
+import com.jozze.nuvo.feature.checkout.CheckoutScreen
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -43,6 +45,9 @@ fun App() {
                         onStoreClick = { storeId ->
                             navController.navigate("catalog/$storeId")
                         },
+                        onCartClick = {
+                            navController.navigate("cart")
+                        },
                         onLogout = {
                             authViewModel.onIntent(AuthIntent.Logout)
                             navController.navigate("auth") {
@@ -57,11 +62,27 @@ fun App() {
                     val storeId = backStackEntry.arguments?.getString("storeId") ?: ""
                     CatalogScreen(
                         storeId = storeId,
-                        onBack = { navController.popBackStack() }
+                        onBack = { navController.popBackStack() },
+                        onCartClick = { navController.navigate("cart") }
+                    )
+                }
+                composable("cart") {
+                    CartScreen(
+                        onBack = { navController.popBackStack() },
+                        onCheckout = { navController.navigate("checkout") }
+                    )
+                }
+                composable("checkout") {
+                    CheckoutScreen(
+                        onBack = { navController.popBackStack() },
+                        onOrderPlaced = {
+                            navController.navigate("discovery") {
+                                popUpTo("discovery") { inclusive = true }
+                            }
+                        }
                     )
                 }
             }
         }
     }
 }
-

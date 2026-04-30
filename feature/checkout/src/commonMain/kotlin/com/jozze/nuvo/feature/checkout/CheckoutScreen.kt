@@ -17,6 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.jozze.nuvo.domain.entity.Address
 import com.jozze.nuvo.util.format
+import nuvostore.feature.checkout.generated.resources.Res
+import nuvostore.feature.checkout.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,10 +34,10 @@ fun CheckoutScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Checkout") },
+                title = { Text(stringResource(Res.string.checkout_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.back))
                     }
                 }
             )
@@ -52,7 +55,7 @@ fun CheckoutScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column {
-                            Text("Total", style = MaterialTheme.typography.labelMedium)
+                            Text(stringResource(Res.string.total), style = MaterialTheme.typography.labelMedium)
                             Text("$${totalAmount.format(2)}", style = MaterialTheme.typography.headlineSmall)
                         }
                         Button(
@@ -62,7 +65,7 @@ fun CheckoutScreen(
                             if (state.isPlacingOrder) {
                                 CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
                             } else {
-                                Text("Place Order")
+                                Text(stringResource(Res.string.place_order))
                             }
                         }
                     }
@@ -76,7 +79,7 @@ fun CheckoutScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item {
-                Text("Select Delivery Address", style = MaterialTheme.typography.titleLarge)
+                Text(stringResource(Res.string.select_address), style = MaterialTheme.typography.titleLarge)
             }
 
             if (state.isLoading) {
@@ -92,9 +95,9 @@ fun CheckoutScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text("No addresses found.")
+                        Text(stringResource(Res.string.no_addresses))
                         Button(onClick = { /* TODO: Navigate to Add Address */ }) {
-                            Text("Add Address")
+                            Text(stringResource(Res.string.add_address))
                         }
                     }
                 }
@@ -113,7 +116,7 @@ fun CheckoutScreen(
                     modifier = Modifier.padding(vertical = 8.dp),
                     thickness = 1.dp
                 )
-                Text("Order Summary", style = MaterialTheme.typography.titleLarge)
+                Text(stringResource(Res.string.order_summary), style = MaterialTheme.typography.titleLarge)
             }
 
             items(state.cartItems) { item ->

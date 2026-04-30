@@ -11,6 +11,7 @@ data class DiscoveryState(
 
 sealed interface DiscoveryIntent : MviIntent {
     data class LoadNearbyStores(val lat: Double, val lng: Double, val radius: Int) : DiscoveryIntent
+    data class ToggleFavourite(val storeId: String) : DiscoveryIntent
 }
 
 sealed interface DiscoveryEffect : MviEffect {

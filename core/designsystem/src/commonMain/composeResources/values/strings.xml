@@ -1,0 +1,8 @@
+<resources>
+    <string name="back">Back</string>
+    <string name="retry">Retry</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="error_unknown">Unknown error occurred</string>
+    <string name="add">Add</string>
+</resources>

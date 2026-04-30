@@ -51,12 +51,12 @@ Agnostic delivery platform. Compose Multiplatform (Android/iOS). MVI + Clean Arc
 
 ### Phase 5: Polishing & Real-time Features
 
-- [ ] FCM Order Status updates.
-- [ ] Reviews & Ratings.
-- [ ] Favourites toggle.
-- [ ] Migrate to `jetbrains.compose.resources`.
-- [ ] Final UI/UX polish (M3 details).
-- [ ] Multi-industry branding.
+- [ ] FCM Order Status updates (Moved to next phase).
+- [x] Reviews & Ratings (UI + Mocks).
+- [x] Favourites toggle (Room KMP persistence).
+- [x] Migrate to `jetbrains.compose.resources`.
+- [x] Final UI/UX polish (M3 details).
+- [ ] Multi-industry branding (Moved to next phase).
 
 ## 4. Module Map
 

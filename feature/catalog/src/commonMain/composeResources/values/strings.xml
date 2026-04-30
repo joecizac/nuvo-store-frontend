@@ -1,0 +1,11 @@
+<resources>
+    <string name="catalog_title">Catalog</string>
+    <string name="all_categories">All</string>
+    <string name="clear_cart_title">Clear cart?</string>
+    <string name="clear_cart_msg">Your cart contains items from a different store. Do you want to clear it and add this item?</string>
+    <string name="clear_and_add">Clear and Add</string>
+    <string name="added_to_cart">%s added to cart</string>
+    <string name="failed_to_load_catalog">Failed to load catalog</string>
+    <string name="back">Back</string>
+    <string name="cancel">Cancel</string>
+</resources>
