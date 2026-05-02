@@ -1,10 +1,10 @@
 package com.jozze.nuvo.core.network
 
+import com.jozze.nuvo.core.logging.NuvoLogger
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
@@ -19,6 +19,7 @@ import org.koin.dsl.module
 val networkModule = module {
     single {
         val tokenProvider: TokenProvider? = getOrNull()
+        val baseUrl = getProperty("SERVER_URL", "http://localhost:8080/")
 
         HttpClient {
             install(ContentNegotiation) {
@@ -28,12 +29,18 @@ val networkModule = module {
                     isLenient = true
                 })
             }
-            install(Logging) {
-                level = LogLevel.ALL
-                logger = Logger.DEFAULT
+            if (NuvoLogger.isEnabled) {
+                install(Logging) {
+                    level = LogLevel.ALL
+                    logger = object : Logger {
+                        override fun log(message: String) {
+                            NuvoLogger.d("Network") { message }
+                        }
+                    }
+                    sanitizeHeader { header -> header == HttpHeaders.Authorization }
+                }
             }
 
-            val baseUrl = getProperty("SERVER_URL", "http://localhost:8080/")
             defaultRequest {
                 url(baseUrl)
             }
@@ -49,6 +56,9 @@ val networkModule = module {
                         val token = tokenProvider.getToken()
                         if (token != null) {
                             context.header(HttpHeaders.Authorization, "Bearer $token")
+                            NuvoLogger.d("Network") {
+                                "Attached Authorization header to ${context.url.buildString()}"
+                            }
                         }
                     }
                 }

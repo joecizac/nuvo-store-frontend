@@ -1,5 +1,6 @@
 package com.jozze.nuvo.data.repository
 
+import com.jozze.nuvo.core.logging.NuvoLogger
 import com.jozze.nuvo.data.local.dao.CartDao
 import com.jozze.nuvo.data.local.entity.toDomain
 import com.jozze.nuvo.data.local.entity.toEntity
@@ -7,9 +8,15 @@ import com.jozze.nuvo.data.remote.CartApi
 import com.jozze.nuvo.domain.entity.CartItem
 import com.jozze.nuvo.domain.exception.DifferentStoreCartException
 import com.jozze.nuvo.domain.repository.CartRepository
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -40,6 +47,9 @@ class CartRepositoryImpl(
     override suspend fun addItem(item: CartItem) {
         val anyItem = cartDao.getAnyItem()
         if (anyItem != null && anyItem.storeId != item.storeId) {
+            NuvoLogger.e(TAG) {
+                "Rejected cart add due to different store. existing=${anyItem.storeId}, new=${item.storeId}"
+            }
             throw DifferentStoreCartException(
                 existingStoreId = anyItem.storeId,
                 newStoreId = item.storeId
@@ -49,24 +59,31 @@ class CartRepositoryImpl(
         val existingItem = cartDao.getById(item.id)
         if (existingItem != null) {
             cartDao.updateQuantity(item.id, existingItem.quantity + item.quantity)
+            NuvoLogger.d(TAG) {
+                "Updated cart item=${item.id}, quantity=${existingItem.quantity + item.quantity}"
+            }
         } else {
             cartDao.insert(item.toEntity())
+            NuvoLogger.d(TAG) { "Inserted cart item=${item.id}, quantity=${item.quantity}" }
         }
         syncTrigger.tryEmit(Unit)
     }
 
     override suspend fun updateQuantity(itemId: String, quantity: Int) {
         cartDao.updateQuantity(itemId, quantity)
+        NuvoLogger.d(TAG) { "Cart quantity updated. item=$itemId, quantity=$quantity" }
         syncTrigger.tryEmit(Unit)
     }
 
     override suspend fun removeItem(itemId: String) {
         cartDao.deleteById(itemId)
+        NuvoLogger.d(TAG) { "Cart item removed. item=$itemId" }
         syncTrigger.tryEmit(Unit)
     }
 
     override suspend fun clearCart() {
         cartDao.clearAll()
+        NuvoLogger.d(TAG) { "Cart cleared" }
         syncTrigger.tryEmit(Unit)
     }
 
@@ -84,13 +101,14 @@ class CartRepositoryImpl(
         repositoryScope.launch {
             try {
                 val remoteItems = cartApi.getCart()
+                NuvoLogger.d(TAG) { "Initial remote cart sync returned ${remoteItems.size} items" }
                 if (remoteItems.isNotEmpty()) {
                     remoteItems.forEach { cartDao.insert(it.toEntity()) }
                     // Trigger a push to ensure remote is updated if any local merge happened
                     syncTrigger.emit(Unit)
                 }
             } catch (e: Exception) {
-                println("Initial cart sync failed: ${e.message}")
+                NuvoLogger.e(TAG, e) { "Initial cart sync failed" }
             }
         }
     }
@@ -99,11 +117,16 @@ class CartRepositoryImpl(
         syncMutex.withLock {
             try {
                 val items = cartDao.getAllItems().map { it.toDomain() }
+                NuvoLogger.d(TAG) { "Syncing cart with remote. itemCount=${items.size}" }
                 cartApi.syncCart(items)
+                NuvoLogger.d(TAG) { "Cart remote sync completed" }
             } catch (e: Exception) {
-                // TODO: Use proper multiplatform logger (e.g., Kermit or Napier)
-                println("Cart sync failed: ${e.message}")
+                NuvoLogger.e(TAG, e) { "Cart sync failed" }
             }
         }
+    }
+
+    private companion object {
+        const val TAG = "CartRepository"
     }
 }

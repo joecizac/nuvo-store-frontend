@@ -32,6 +32,7 @@ include(":composeApp")
 
 // Core Modules
 include(":core:designsystem")
+include(":core:logging")
 include(":core:network")
 include(":core:mvi")
 

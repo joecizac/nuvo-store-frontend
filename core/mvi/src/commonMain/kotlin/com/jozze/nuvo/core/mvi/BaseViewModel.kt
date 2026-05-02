@@ -2,8 +2,13 @@ package com.jozze.nuvo.core.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jozze.nuvo.core.logging.NuvoLogger
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
@@ -44,6 +49,7 @@ abstract class BaseViewModel<S : MviState, I : MviIntent, E : MviEffect>(
      * Dispatches an intent to the ViewModel.
      */
     fun onIntent(intent: I) {
+        NuvoLogger.d(tag) { "Intent received: $intent" }
         _intent.tryEmit(intent)
     }
 
@@ -56,13 +62,21 @@ abstract class BaseViewModel<S : MviState, I : MviIntent, E : MviEffect>(
      * Updates the current UI state.
      */
     protected fun setState(reducer: S.() -> S) {
-        _uiState.update { it.reducer() }
+        _uiState.update { currentState ->
+            currentState.reducer().also { newState ->
+                NuvoLogger.d(tag) { "State updated: $newState" }
+            }
+        }
     }
 
     /**
      * Emits a side effect.
      */
     protected fun emitEffect(effect: E) {
+        NuvoLogger.d(tag) { "Effect emitted: $effect" }
         _effect.tryEmit(effect)
     }
+
+    private val tag: String
+        get() = this::class.simpleName ?: "BaseViewModel"
 }

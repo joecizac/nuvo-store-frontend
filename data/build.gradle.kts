@@ -26,6 +26,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(project(":domain"))
+            implementation(project(":core:logging"))
             implementation(project(":core:network"))
             implementation(libs.ktor.client.core)
             implementation(libs.room.runtime)

@@ -1,5 +1,6 @@
 package com.jozze.nuvo.data.repository
 
+import com.jozze.nuvo.core.logging.NuvoLogger
 import com.jozze.nuvo.data.local.dao.FavouriteDao
 import com.jozze.nuvo.data.local.entity.FavouriteProductEntity
 import com.jozze.nuvo.data.local.entity.FavouriteStoreEntity
@@ -19,8 +20,10 @@ class FavouriteRepositoryImpl(
         val isFavourite = favouriteDao.isStoreFavourite(storeId).first()
         if (isFavourite) {
             favouriteDao.deleteStore(storeId)
+            NuvoLogger.d(TAG) { "Store favourite removed. store=$storeId" }
         } else {
             favouriteDao.insertStore(FavouriteStoreEntity(storeId))
+            NuvoLogger.d(TAG) { "Store favourite added. store=$storeId" }
         }
     }
 
@@ -34,11 +37,17 @@ class FavouriteRepositoryImpl(
         val isFavourite = favouriteDao.isProductFavourite(productId).first()
         if (isFavourite) {
             favouriteDao.deleteProduct(productId)
+            NuvoLogger.d(TAG) { "Product favourite removed. product=$productId" }
         } else {
             favouriteDao.insertProduct(FavouriteProductEntity(productId))
+            NuvoLogger.d(TAG) { "Product favourite added. product=$productId" }
         }
     }
 
     override fun isProductFavourite(productId: String): Flow<Boolean> =
         favouriteDao.isProductFavourite(productId)
+
+    private companion object {
+        const val TAG = "FavouriteRepository"
+    }
 }
